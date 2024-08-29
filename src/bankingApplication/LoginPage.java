@@ -60,11 +60,11 @@ public class LoginPage {
 			System.out.println("Enter Password:");
 			String SystemPass = sc.nextLine();
 			
-			String Query = " Select SystemPassword from Authentication where CustomerId ="+ "";
+			String Query = " Select SystemPassword from Authentication where CustomerId ="+ "'CustID'";
 			pst = connect.prepareStatement(Query);
 			ResultSet rs = null;
 			rs=pst.executeQuery();
-			String Pass = rs.getString(2,CustID);
+			String Pass = rs.getString(2);
 			
 			if(SystemPass.equals(Pass))
 			{
