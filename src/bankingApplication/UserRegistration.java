@@ -2,31 +2,16 @@ package bankingApplication;
 
 import java.util.*;
 import java.sql.*;
+import java.sql.Date;
+//import java.text.ParseException;
+//import java.text.SimpleDateFormat;
 
 public class UserRegistration {
 	
-	/* CREATE TABLE Accounts (
-    AccountNumber VARCHAR(20) PRIMARY KEY,
-    CustomerID VARCHAR(20),
-    AccountType VARCHAR(20),
-    AccountBalance DECIMAL(15, 2),
-    DateOfAccountCreation DATE,
-    BranchID INT,
-    AccountStatus VARCHAR(10),
-    InterestRate DECIMAL(5, 2),
-    MinimumBalanceRequirement DECIMAL(15, 2),
-    OverdraftLimit DECIMAL(15, 2),
-    NomineeName VARCHAR(100),
-    LastTransactionDate DATE,
-    CurrencyType VARCHAR(3),
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
-    
-); */
-
 	static Connection connect;
 	static PreparedStatement pst;
 	static Scanner sc = new Scanner(System.in);
-	//static CustomerId ci = new CustomerId();
+	
 	static
 	{
 		 try
@@ -48,35 +33,101 @@ public class UserRegistration {
 
 		public static void  userData() throws SQLException
 		{
-			String Query = "INSERT INTO Accounts (AccountNumber, CustomerID, AccountType, NomineeName) VALUES (?,?,?,?)";
-	    	PreparedStatement pst = connect.prepareStatement(Query);
+			String Query = "INSERT INTO Customers (CustomerID,FirstName,LastName,DateofBirth,Address,PhoneNumber, Email, Gender, AccountType) VALUES (?,?,?,?,?,?,?,?,?)";
+	    	 pst = connect.prepareStatement(Query);
 	    	
-	    	
-	    	
-	    	for(int j =0; j<3;j++)
-	    	{
-	    		 
-	    	        
-	    	       String AccountNum = AccountNumber.NumberAcc();
+	    
 	    	       
-	    	        int  CustomerID = CustomerId.customerIdVal();
+	    	        int  CustID = CustomerId.customerIdVal();
+	    	        
+	    	        System.out.println("Enter FirstName:");
+	    	        String FName = sc.nextLine();
+	    	        
+	    	        System.out.println("Enter  LastName:");
+	    	        String LName = sc.nextLine();
+	    	        
+	    	        System.out.println("Enter  DataOfBirth:");
+	    	        String DOB = sc.nextLine();
+	    	  
+	    	        System.out.println("Enter   Address:");
+	    	        String Addr = sc.nextLine();
+	    	        
+	    	        System.out.println("Enter   PhoneNumber:");
+	    	        String PNumber = sc.nextLine();
+	    	        
+	    	        System.out.println("Enter Email:");
+	    	        String Email = sc.nextLine();
+	    	        
+	    	        System.out.println("Enter Gender:");
+	    	        String Gender = sc.nextLine();
 	    	        
 	    	        System.out.println("Enter AccountType:");
-	    	        String AccountType = sc.nextLine();
+	    	        String AccType = sc.nextLine();
 	    	        
-	    	        System.out.println("Enter Customer Nominee Name:");
-	    	        String NomineeName = sc.nextLine();
-	    	        sc.nextLine();
 	    	        
-	    	        pst.setString(1, AccountNum);
-	    	        pst.setInt(2, CustomerID);
-	    	        pst.setString(3, AccountType);
-	    	        pst.setString(4, NomineeName);
-	    	        int i = pst.executeUpdate();
+	    	        pst.setInt(1, CustID);
+	    	        pst.setString(2, FName);
+	    	        pst.setString(3, LName);
+	    	        pst.setDate(4, Date.valueOf(DOB));
+	    	        pst.setString(5, Addr);
+	    	        pst.setString(6, PNumber);
+	    	        pst.setString(7, Email);
+	    	        pst.setString(8, Gender);
+	    	        pst.setString(9, AccType);
 	    	        
-	        		System.out.println("Added Successfully! and Records Updated::"+i);
+	    	        pst.executeUpdate();
 	    	        
-	    	}
+	    	        String AccQuery ="insert into Accounts (AccountNumber,CustomerId) values(?,?)" ;
+	    	        
+	    	        pst=null;
+	    	        
+	    	        pst = connect.prepareStatement(AccQuery);
+	    	        
+	    	        String AccNum = AccountNumber.NumberAcc();
+	    	        pst.setString(1, AccNum);
+	    	        pst.setInt(2, CustID);
+	    	        
+	    	          pst.executeUpdate();
+	    	        
+	    	        
+	      
+	        		System.out.println("Customers CustomerId, please store it = "+CustID);
+	        		
+	        		ResultSet Rs = null;
+	          	 
+	          	 String DataQuery = "Select  CustomerId, AccountNumber from Accounts ";
+	          	 
+	          	  pst = connect.prepareStatement(DataQuery);
+	          	 
+	          	  Rs = pst.executeQuery();
+	          	 
+	          	  while(Rs.next()) 
+	          	  {
+	          		  if(Rs.getInt("CustomerId") == CustID)
+	          		
+	          		System.out.print("AccountNumber, Please Save it :    "+Rs.getString("AccountNumber"));
+	          		  
+	          	  }
+	          	  
+	          	  String Passwrd = PasswordGenerator.pass();
+	          	  
+	          	String QueryPass = "INSERT INTO  Authentication (AccountNumber,CustomerId,SystemPassword) VALUES (?,?,?)";
+		    	
+	          	pst = null; 
+	          	
+	          	pst = connect.prepareStatement(QueryPass);
+	          	
+		    	pst.setString(1, AccNum);
+		    	pst.setInt(2, CustID);
+		    	pst.setString(3, Passwrd);
+		    	 
+		    	pst.executeUpdate();
+		    	
+	          System.out.println("\n"+"Password, Please Save it :    "+Passwrd);
+	          		  
+	       
+		    	System.out.println("\n"+"THANKYOU!");
+	        		connect.close();
 	    	sc.close();
 	        
 		}
