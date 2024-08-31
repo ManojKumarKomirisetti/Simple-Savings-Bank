@@ -1,7 +1,7 @@
 package bankingApplication;
 import java.util.*;
 import java.sql.*;
-
+//Login Page
 public class LoginPage {
 	static Scanner sc = new Scanner(System.in);
 	static Connection connect;
