@@ -1,6 +1,6 @@
 package bankingApplication;
 import java.sql.*;
-
+//Password
 public class PasswordTable {
 	
 	static Connection connect;
